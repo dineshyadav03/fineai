@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lexend:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans text-trainy-text-primary bg-trainy-background;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+
+  .card {
+    @apply bg-trainy-card p-6 rounded-lg shadow-soft border border-trainy-border;
+  }
+
+  .btn-primary {
+    @apply bg-trainy-accent-blue text-white px-5 py-2 rounded-md font-medium shadow-sm hover:bg-trainy-accent-dark-blue transition-colors duration-200;
+  }
+
+  .form-label {
+    @apply block text-sm font-medium text-trainy-text-secondary mb-1;
+  }
+
+  .form-input,
+  .form-select {
+    @apply block w-full px-3 py-2 border border-trainy-border rounded-md shadow-sm focus:outline-none focus:ring-trainy-accent-blue focus:border-trainy-accent-blue sm:text-sm;
+  }
+}
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-rgb: 255, 255, 255;
+}
+
+body {
+  color: theme('colors.trainy-light');
+  background: theme('colors.trainy-dark');
+}
+
+/* Custom styles for form elements */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select {
+  @apply block w-full rounded-md border-gray-700 bg-gray-800 text-trainy-light shadow-sm focus:border-trainy-accent-blue focus:ring-trainy-accent-blue sm:text-sm;
+}
+
+/* Custom styles for buttons */
+.btn-primary {
+  @apply inline-flex justify-center py-3 px-6 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-trainy-accent-blue hover:bg-trainy-accent-purple focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-trainy-accent-blue disabled:opacity-50 transition-colors duration-200;
+}
+
+.btn-secondary {
+  @apply inline-flex justify-center py-3 px-6 border border-gray-700 rounded-lg shadow-sm text-base font-medium text-trainy-light bg-gray-800 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-trainy-accent-blue disabled:opacity-50 transition-colors duration-200;
+}
+
+/* Custom styles for cards */
+.card {
+  @apply bg-gray-800 shadow rounded-lg p-6;
+}
+
+/* Custom styles for form groups */
+.form-group {
+  @apply space-y-1;
+}
+
+/* Custom styles for labels */
+.form-label {
+  @apply block text-sm font-medium text-trainy-light;
+}
+
+/* Custom styles for error messages */
+.error-message {
+  @apply mt-1 text-sm text-red-400;
+}
+
+/* Custom styles for success messages */
+.success-message {
+  @apply mt-1 text-sm text-green-400;
+} 
