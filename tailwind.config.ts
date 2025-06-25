@@ -48,6 +48,9 @@ const config: Config = {
         soft: '0 4px 6px rgba(0, 0, 0, 0.05)',
         medium: '0 10px 15px rgba(0, 0, 0, 0.1)',
       },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+      },
     },
   },
   plugins: [

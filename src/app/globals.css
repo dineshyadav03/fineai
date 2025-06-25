@@ -1,84 +1,119 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lexend:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html, body {
+    font-family: 'Inter', system-ui, sans-serif;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
   body {
-    @apply font-sans text-trainy-text-primary bg-trainy-background;
+    @apply font-sans text-gray-900 antialiased;
+    background: transparent;
+  }
+
+  #__next {
+    height: 100%;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display;
+    @apply font-black;
   }
+}
 
+@layer components {
   .card {
-    @apply bg-trainy-card p-6 rounded-lg shadow-soft border border-trainy-border;
+    @apply bg-white p-6 rounded-2xl shadow-lg border border-gray-100;
   }
 
   .btn-primary {
-    @apply bg-trainy-accent-blue text-white px-5 py-2 rounded-md font-medium shadow-sm hover:bg-trainy-accent-dark-blue transition-colors duration-200;
+    @apply bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold shadow-lg hover:bg-blue-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-gray-700 px-6 py-3 rounded-lg font-semibold border border-gray-300 shadow-sm hover:bg-gray-50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .form-label {
-    @apply block text-sm font-medium text-trainy-text-secondary mb-1;
+    @apply block text-sm font-medium text-gray-700 mb-2;
   }
 
   .form-input,
   .form-select {
-    @apply block w-full px-3 py-2 border border-trainy-border rounded-md shadow-sm focus:outline-none focus:ring-trainy-accent-blue focus:border-trainy-accent-blue sm:text-sm;
+    @apply block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200;
+  }
+
+  .error-message {
+    @apply mt-1 text-sm text-red-600;
+  }
+
+  .success-message {
+    @apply mt-1 text-sm text-green-600;
+  }
+
+  /* Glass morphism effects */
+  .glass-effect {
+    @apply backdrop-blur-xl bg-white/80 border border-white/20;
+  }
+
+  .glass-dark {
+    @apply backdrop-blur-xl bg-black/20 border border-white/10;
+  }
+
+  /* Floating animation */
+  .floating {
+    animation: floating 6s ease-in-out infinite;
+  }
+
+  /* Shimmer loading effect */
+  .shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
   }
 }
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-rgb: 255, 255, 255;
+@layer utilities {
+  .backdrop-blur-strong {
+    backdrop-filter: blur(20px);
+  }
+
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .text-shadow-lg {
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
 }
 
-body {
-  color: theme('colors.trainy-light');
-  background: theme('colors.trainy-dark');
+/* Custom keyframes */
+@keyframes floating {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
 }
 
-/* Custom styles for form elements */
-input[type="text"],
-input[type="email"],
-input[type="password"],
-select {
-  @apply block w-full rounded-md border-gray-700 bg-gray-800 text-trainy-light shadow-sm focus:border-trainy-accent-blue focus:ring-trainy-accent-blue sm:text-sm;
-}
-
-/* Custom styles for buttons */
-.btn-primary {
-  @apply inline-flex justify-center py-3 px-6 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-trainy-accent-blue hover:bg-trainy-accent-purple focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-trainy-accent-blue disabled:opacity-50 transition-colors duration-200;
-}
-
-.btn-secondary {
-  @apply inline-flex justify-center py-3 px-6 border border-gray-700 rounded-lg shadow-sm text-base font-medium text-trainy-light bg-gray-800 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-trainy-accent-blue disabled:opacity-50 transition-colors duration-200;
-}
-
-/* Custom styles for cards */
-.card {
-  @apply bg-gray-800 shadow rounded-lg p-6;
-}
-
-/* Custom styles for form groups */
-.form-group {
-  @apply space-y-1;
-}
-
-/* Custom styles for labels */
-.form-label {
-  @apply block text-sm font-medium text-trainy-light;
-}
-
-/* Custom styles for error messages */
-.error-message {
-  @apply mt-1 text-sm text-red-400;
-}
-
-/* Custom styles for success messages */
-.success-message {
-  @apply mt-1 text-sm text-green-400;
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 } 

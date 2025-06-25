@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { Toaster } from 'react-hot-toast';
+import ConditionalNavbar from "@/components/ConditionalNavbar";
 
 export const metadata: Metadata = {
   title: "FineAI - Fine-tune Your AI Models",
@@ -16,8 +17,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Navbar />
-        <main className="min-h-screen bg-trainy-background">
+        <ConditionalNavbar />
+        <main>
           {children}
         </main>
         <Toaster position="bottom-right" />

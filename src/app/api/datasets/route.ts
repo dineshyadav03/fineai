@@ -3,6 +3,31 @@ import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { cohereService } from '@/services/cohere';
 
+export async function GET() {
+  try {
+    // Get real datasets from Cohere
+    const response = await cohereService.listDatasets();
+
+    if (response.error) {
+      return NextResponse.json(
+        { error: response.error.message },
+        { status: response.error.status || 500 }
+      );
+    }
+
+    return NextResponse.json({ 
+      success: true, 
+      datasets: response.data 
+    });
+  } catch (error: any) {
+    console.error('List datasets API error:', error);
+    return NextResponse.json(
+      { error: error.message || 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(request: Request) {
   try {
     const cookieStore = cookies();
@@ -17,17 +42,19 @@ export async function POST(request: Request) {
       );
     }
 
-    const { datasetId, modelName, baseModel } = await request.json();
+    const formData = await request.formData();
+    const file = formData.get('file') as File;
+    const name = formData.get('name') as string;
 
-    if (!datasetId || !modelName || !baseModel) {
+    if (!file || !name) {
       return NextResponse.json(
-        { error: 'Missing required fields: datasetId, modelName, baseModel' },
+        { error: 'Missing file or name' },
         { status: 400 }
       );
     }
 
-    // Create fine-tuned model using the service
-    const response = await cohereService.createModel(datasetId, modelName, baseModel);
+    // Upload dataset to Cohere
+    const response = await cohereService.createDataset(name, file);
 
     if (response.error) {
       return NextResponse.json(
@@ -36,29 +63,12 @@ export async function POST(request: Request) {
       );
     }
 
-    // Store job information in Supabase
-    const { error: dbError } = await supabase
-      .from('fine_tuning_jobs')
-      .insert({
-        user_id: user.id,
-        job_id: response.data.id,
-        model: baseModel,
-        task: 'fine-tune',
-        dataset_path: datasetId,
-        status: response.data.status || 'pending',
-      });
-
-    if (dbError) {
-      console.error('Database error:', dbError);
-      // Don't fail the request if DB insert fails, just log it
-    }
-
     return NextResponse.json({ 
       success: true, 
-      model: response.data 
+      dataset: response.data 
     });
   } catch (error: any) {
-    console.error('Fine-tune API error:', error);
+    console.error('Upload dataset API error:', error);
     return NextResponse.json(
       { error: error.message || 'Internal server error' },
       { status: 500 }
@@ -66,7 +76,7 @@ export async function POST(request: Request) {
   }
 }
 
-export async function GET(request: Request) {
+export async function DELETE(request: Request) {
   try {
     const cookieStore = cookies();
     const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
@@ -81,17 +91,17 @@ export async function GET(request: Request) {
     }
 
     const { searchParams } = new URL(request.url);
-    const modelId = searchParams.get('modelId');
+    const datasetId = searchParams.get('id');
 
-    if (!modelId) {
+    if (!datasetId) {
       return NextResponse.json(
-        { error: 'Model ID is required' },
+        { error: 'Dataset ID is required' },
         { status: 400 }
       );
     }
 
-    // Get model status from Cohere
-    const response = await cohereService.getModel(modelId);
+    // Delete dataset from Cohere
+    const response = await cohereService.deleteDataset(datasetId);
 
     if (response.error) {
       return NextResponse.json(
@@ -100,24 +110,12 @@ export async function GET(request: Request) {
       );
     }
 
-    // Update job status in Supabase
-    const { error: dbError } = await supabase
-      .from('fine_tuning_jobs')
-      .update({ status: response.data.status })
-      .eq('job_id', modelId)
-      .eq('user_id', user.id);
-
-    if (dbError) {
-      console.error('Database update error:', dbError);
-      // Don't fail the request if DB update fails, just log it
-    }
-
     return NextResponse.json({ 
       success: true, 
-      model: response.data 
+      message: 'Dataset deleted successfully' 
     });
   } catch (error: any) {
-    console.error('Get model API error:', error);
+    console.error('Delete dataset API error:', error);
     return NextResponse.json(
       { error: error.message || 'Internal server error' },
       { status: 500 }
