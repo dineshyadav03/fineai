@@ -21,6 +21,19 @@ const config: Config = {
           800: '#075985',
           900: '#0c4a6e',
         },
+        // Subtle accent colors - less intense orange
+        accent: {
+          50: '#fefaf6',
+          100: '#fef3eb',
+          200: '#fde4c7',
+          300: '#fbcfa3',
+          400: '#f7a55b',
+          500: '#f37a13',
+          600: '#db6e11',
+          700: '#b65c0e',
+          800: '#914a0b',
+          900: '#773d09',
+        },
         // New colors to match trainy.ai
         'trainy-dark': '#0A0A0A',
         'trainy-light': '#F0F0F0',

@@ -76,6 +76,7 @@ export default function Navbar() {
   const navItems = [
     { name: 'Home', href: '/' },
     { name: 'Features', href: '/features' },
+    { name: 'Model Access', href: '/model-access' },
     { name: 'Pricing', href: '/pricing' },
     { name: 'Learn More', href: '/learn-more' },
     ...(user ? [{ name: 'Dashboard', href: '/dashboard' }] : []),
@@ -83,31 +84,31 @@ export default function Navbar() {
 
   return (
     <>
-      <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-11/12 max-w-4xl">
+      <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-11/12 max-w-5xl">
         <motion.nav
-          className={`transition-all duration-500 ${
+          className={`transition-all duration-300 ${
             scrolled 
-              ? 'bg-gray-800/95 backdrop-blur-xl border border-orange-500/30 shadow-xl shadow-orange-500/20' 
-              : 'bg-gray-800/90 backdrop-blur-md border border-orange-400/30 shadow-lg'
+              ? 'bg-gray-900/90 backdrop-blur-xl border border-accent-500/15 shadow-xl shadow-accent-500/5' 
+              : 'bg-gray-900/80 backdrop-blur-md border border-accent-400/15 shadow-lg'
           } rounded-2xl`}
           initial={{ y: -100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
         >
-        <div className="px-6">
+        <div className="px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex items-center space-x-3"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className="flex items-center space-x-2"
             >
-              <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
-                <div className="w-4 h-4 bg-white rounded-full" />
+              <div className="w-6 h-6 bg-accent-500 rounded-full flex items-center justify-center">
+                <div className="w-3 h-3 bg-white rounded-full" />
               </div>
               <Link 
                 href="/" 
-                className="text-2xl font-black text-white transition-colors duration-300 hover:text-orange-400"
+                className="text-xl font-black text-white transition-colors duration-300 hover:text-accent-400"
               >
                 FineAI
               </Link>
@@ -126,16 +127,16 @@ export default function Navbar() {
                     href={item.href}
                     className={`relative text-sm font-medium transition-colors duration-300 ${
                       pathname === item.href
-                        ? 'text-orange-400'
+                        ? 'text-accent-400'
                         : 'text-white/80 hover:text-white'
                     }`}
                   >
                     {item.name}
                     {pathname === item.href && (
                       <motion.div
-                        className="absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-orange-400"
+                        className="absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-accent-400"
                         layoutId="navbar-indicator"
-                        transition={{ type: "spring", bounce: 0.25, duration: 0.5 }}
+                        transition={{ type: "spring", bounce: 0.25, duration: 0.3 }}
                       />
                     )}
                   </Link>
@@ -149,15 +150,15 @@ export default function Navbar() {
                 transition={{ duration: 0.6, delay: 0.3 }}
               >
                 {user ? (
-                  <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-6">
                     <div className="flex items-center space-x-2">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${user.isGuest ? 'bg-amber-500' : 'bg-blue-600'}`}>
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${user.isGuest ? 'bg-amber-500' : 'bg-blue-500'}`}>
                         <span className="text-sm font-medium text-white">
                           {user.isGuest ? '👤' : user.email?.charAt(0).toUpperCase()}
                         </span>
                       </div>
                       {user.isGuest && (
-                        <span className="text-xs text-amber-600 font-medium">Guest</span>
+                        <span className="text-xs text-amber-500 font-medium">Guest</span>
                       )}
                     </div>
                     <motion.button
@@ -219,7 +220,7 @@ export default function Navbar() {
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
-              className="md:hidden bg-gray-800/95 backdrop-blur-xl border-t border-orange-400/30 rounded-b-2xl"
+              className="md:hidden bg-gray-900/95 backdrop-blur-xl border-t border-accent-400/20 rounded-b-2xl"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
@@ -237,7 +238,7 @@ export default function Navbar() {
                       href={item.href}
                       className={`block text-base font-medium transition-colors duration-200 ${
                         pathname === item.href
-                          ? 'text-orange-400'
+                          ? 'text-accent-400'
                           : 'text-white/80 hover:text-white'
                       }`}
                       onClick={() => setMobileMenuOpen(false)}

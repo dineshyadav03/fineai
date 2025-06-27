@@ -13,6 +13,11 @@ const FileUpload = dynamic(() => import('@/components/upload/FileUpload'), {
   loading: () => <div className="animate-pulse bg-gray-200 h-32 rounded-lg flex items-center justify-center text-gray-500">Loading upload...</div>
 });
 
+// Lazy load the AccessMethodSettings component
+const AccessMethodSettings = dynamic(() => import('@/components/dashboard/AccessMethodSettings'), {
+  loading: () => <div className="animate-pulse bg-gray-200 h-32 rounded-lg flex items-center justify-center text-gray-500">Loading settings...</div>
+});
+
 interface FinetuneJob {
   id: string;
   name: string;
@@ -41,6 +46,13 @@ export default function Dashboard() {
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const [isTraining, setIsTraining] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [activeTab, setActiveTab] = useState('overview');
+  const [accessSettings, setAccessSettings] = useState({
+    method: 'proxy' as 'proxy' | 'byok',
+    cohereApiKey: undefined as string | undefined,
+    webhookUrl: undefined as string | undefined,
+    usageLimit: 1000
+  });
   const router = useRouter();
   const supabase = createClientComponentClient();
 
@@ -429,7 +441,7 @@ export default function Dashboard() {
       case 'STATUS_READY':
         return 'text-green-300 bg-green-500/20 border border-green-500/30';
       case 'training':
-        return 'text-orange-300 bg-orange-500/20 border border-orange-500/30';
+        return 'text-accent-300 bg-accent-500/15 border border-accent-500/20';
       case 'failed':
         return 'text-red-300 bg-red-500/20 border border-red-500/30';
       default:
@@ -465,18 +477,18 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="fixed inset-0 w-full h-full bg-gradient-to-br from-gray-900 via-purple-900 to-black overflow-y-auto">
+    <div className="min-h-screen w-full bg-gradient-to-br from-gray-900 via-purple-900 to-black overflow-x-hidden">
       {/* Cosmic Background Elements */}
       <div className="absolute inset-0 z-0">
         {/* Central Orb */}
         <motion.div
-          className="absolute top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-radial from-orange-500/20 via-orange-600/10 to-transparent rounded-full blur-3xl"
+          className="absolute top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-radial from-accent-500/15 via-accent-600/8 to-transparent rounded-full blur-3xl"
           animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
+            scale: [1, 1.1, 1],
+            opacity: [0.2, 0.4, 0.2],
           }}
           transition={{
-            duration: 4,
+            duration: 6,
             repeat: Infinity,
             ease: "easeInOut"
           }}
@@ -486,20 +498,20 @@ export default function Dashboard() {
         {[...Array(25)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-1 h-1 bg-orange-400 rounded-full"
+            className="absolute w-1 h-1 bg-accent-400 rounded-full"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
             }}
-            animate={{
-              y: [0, -30, 0],
-              opacity: [0, 1, 0],
-            }}
-            transition={{
-              duration: 3 + Math.random() * 2,
-              repeat: Infinity,
-              delay: Math.random() * 2,
-            }}
+                          animate={{
+                y: [0, -20, 0],
+                opacity: [0, 0.8, 0],
+              }}
+              transition={{
+                duration: 4 + Math.random() * 2,
+                repeat: Infinity,
+                delay: Math.random() * 2,
+              }}
           />
         ))}
       </div>
@@ -507,7 +519,7 @@ export default function Dashboard() {
       {/* Scrollable Content */}
       <div className="relative z-10 min-h-full">
         {/* Header Section */}
-        <div className="pt-32 pb-12">
+        <div className="pt-40 pb-12">
           <div className="max-w-7xl mx-auto px-6">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -554,26 +566,78 @@ export default function Dashboard() {
                 { label: 'Ready Models', value: jobs.filter(j => j.status === 'completed' || j.status === 'STATUS_READY').length, icon: '✅' },
                 { label: 'Training', value: jobs.filter(j => j.status === 'training').length, icon: '⏳' }
               ].map((stat, index) => (
-                <div
+                <motion.div
                   key={stat.label}
-                  className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-orange-500/20 shadow-2xl hover:shadow-orange-500/20 transition-all duration-200 hover:border-orange-500/40"
+                  initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                  whileHover={{ 
+                    scale: 1.05, 
+                    y: -5,
+                    boxShadow: "0 25px 50px rgba(255,107,0,0.2)"
+                  }}
+                  className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-accent-500/15 shadow-2xl hover:shadow-accent-500/15 transition-all duration-200 hover:border-accent-500/25 cursor-pointer"
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-gray-300 text-sm font-medium">{stat.label}</p>
-                      <p className="text-3xl font-light text-white mt-1">{stat.value}</p>
+                      <motion.p 
+                        className="text-gray-300 text-sm font-medium"
+                        animate={{ opacity: [0.7, 1, 0.7] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                      >
+                        {stat.label}
+                      </motion.p>
+                      <motion.p 
+                        className="text-3xl font-light text-white mt-1"
+                        animate={{ scale: [1, 1.1, 1] }}
+                        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                      >
+                        {stat.value}
+                      </motion.p>
                     </div>
-                    <div className="text-2xl">{stat.icon}</div>
+                    <motion.div 
+                      className="text-2xl"
+                      animate={{ rotate: [0, 10, -10, 0] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: index * 0.2 }}
+                    >
+                      {stat.icon}
+                    </motion.div>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </motion.div>
           </div>
         </div>
 
+        {/* Tabs */}
+        <div className="max-w-7xl mx-auto px-6 mb-8 relative z-10">
+                      <div className="flex space-x-1 bg-white/5 backdrop-blur-sm rounded-2xl p-2 border border-accent-500/15">
+            {[
+              { id: 'overview', label: 'Overview', icon: '📊' },
+              { id: 'settings', label: 'Model Access', icon: '⚙️' }
+            ].map((tab) => (
+              <motion.button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
+                  activeTab === tab.id
+                    ? 'bg-accent-500 text-white shadow-lg'
+                    : 'text-gray-300 hover:text-white hover:bg-white/10'
+                }`}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+              >
+                <span>{tab.icon}</span>
+                <span>{tab.label}</span>
+              </motion.button>
+            ))}
+          </div>
+        </div>
+
         {/* Main Content */}
         <div className="max-w-7xl mx-auto px-6 pb-24 relative z-10">
-          <div className="grid lg:grid-cols-3 gap-8">
+          {activeTab === 'overview' ? (
+            <div className="grid lg:grid-cols-3 gap-8">
             
             {/* Upload Section */}
             <motion.div
@@ -582,7 +646,7 @@ export default function Dashboard() {
               transition={{ duration: 0.3, delay: 0.2 }}
               className="lg:col-span-1"
             >
-              <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-orange-500/20 shadow-2xl">
+              <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-accent-500/15 shadow-2xl">
                 <h2 className="text-2xl font-medium text-white mb-6">Upload Dataset</h2>
                 {user?.isGuest ? (
                   <div className="text-center py-8">
@@ -666,7 +730,7 @@ export default function Dashboard() {
               transition={{ duration: 0.3, delay: 0.3 }}
               className="lg:col-span-2"
             >
-              <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-orange-500/20 shadow-2xl">
+              <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-accent-500/15 shadow-2xl">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-medium text-white">Your Models</h2>
                   {!user?.isGuest && (
@@ -699,49 +763,146 @@ export default function Dashboard() {
                 ) : (
                   <div className="space-y-4">
                     {jobs.map((job, index) => (
-                      <div
+                      <motion.div
                         key={job.id}
-                        className="bg-white/10 rounded-2xl p-6 border border-white/20 hover:bg-white/15 hover:border-orange-500/30 transition-all duration-200"
+                        initial={{ opacity: 0, x: -20, scale: 0.95 }}
+                        animate={{ opacity: 1, x: 0, scale: 1 }}
+                        transition={{ duration: 0.3, delay: index * 0.1 }}
+                        whileHover={{ 
+                          scale: 1.02, 
+                          y: -3,
+                          boxShadow: "0 20px 40px rgba(255,107,0,0.15)"
+                        }}
+                        className="bg-white/10 rounded-2xl p-6 border border-white/20 hover:bg-white/15 hover:border-orange-500/30 transition-all duration-200 cursor-pointer"
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex-1">
                             <div className="flex items-center space-x-3 mb-2">
-                              <h3 className="font-medium text-white">{job.name}</h3>
-                              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(job.status)}`}>
+                              <motion.h3 
+                                className="font-medium text-white"
+                                animate={{ opacity: [0.8, 1, 0.8] }}
+                                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                              >
+                                {job.name}
+                              </motion.h3>
+                              <motion.span 
+                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(job.status)}`}
+                                animate={{ 
+                                  scale: job.status === 'training' ? [1, 1.1, 1] : 1,
+                                  opacity: job.status === 'training' ? [0.7, 1, 0.7] : 1
+                                }}
+                                transition={{ 
+                                  duration: 1.5, 
+                                  repeat: job.status === 'training' ? Infinity : 0, 
+                                  ease: "easeInOut" 
+                                }}
+                              >
                                 {getStatusIcon(job.status)} {job.status}
-                              </span>
+                              </motion.span>
                             </div>
-                            <p className="text-sm text-gray-300 mb-1 font-light">Dataset: {job.dataset_name}</p>
-                            <p className="text-xs text-gray-400 font-light">
+                            <motion.p 
+                              className="text-sm text-gray-300 mb-1 font-light"
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              transition={{ delay: 0.2 }}
+                            >
+                              Dataset: {job.dataset_name}
+                            </motion.p>
+                            <motion.p 
+                              className="text-xs text-gray-400 font-light"
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              transition={{ delay: 0.3 }}
+                            >
                               Created: {new Date(job.created_at).toLocaleDateString()}
-                            </p>
+                            </motion.p>
                           </div>
 
                           {/* Action Buttons for Ready Models */}
                           {(job.status === 'completed' || job.status === 'STATUS_READY') && (
-                            <div className="flex space-x-2">
-                              <button
+                            <motion.div 
+                              className="flex space-x-2"
+                              initial={{ opacity: 0, x: 20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: 0.4 }}
+                            >
+                              <motion.button
                                 onClick={() => handleTestModel(job.id)}
                                 className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
                               >
                                 Test Model
-                              </button>
-                              <button
+                              </motion.button>
+                              <motion.button
                                 onClick={() => handleCopyId(job.id)}
                                 className="bg-white/10 hover:bg-white/20 text-gray-300 border border-white/20 px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
                               >
                                 Copy ID
-                              </button>
-                            </div>
+                              </motion.button>
+                            </motion.div>
                           )}
                         </div>
-                      </div>
+                      </motion.div>
                     ))}
                   </div>
                 )}
               </div>
             </motion.div>
           </div>
+          ) : (
+            // Settings Tab Content
+            <div className="max-w-4xl mx-auto">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="mb-8">
+                  <h2 className="text-3xl font-light text-white mb-4">Model Access Settings</h2>
+                  <p className="text-gray-300 font-light">
+                    Configure how you want to access your fine-tuned models. Choose between our managed API gateway 
+                    or bring your own Cohere API key for direct access.
+                  </p>
+                </div>
+
+                <AccessMethodSettings
+                  onSettingsChange={(settings) => {
+                    setAccessSettings({
+                      method: settings.method,
+                      cohereApiKey: settings.cohereApiKey,
+                      webhookUrl: settings.webhookUrl,
+                      usageLimit: settings.usageLimit || 1000
+                    });
+                  }}
+                  currentSettings={accessSettings}
+                />
+
+                {/* Quick Access to Model Access Info */}
+                <div className="mt-8 bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 rounded-2xl p-6">
+                  <div className="flex items-start space-x-3">
+                    <span className="text-2xl">💡</span>
+                    <div>
+                      <h3 className="text-white font-medium mb-2">Need More Information?</h3>
+                      <p className="text-gray-300 text-sm mb-4">
+                        Learn about the differences between API Gateway and BYOK approaches, 
+                        including pricing, setup complexity, and use cases.
+                      </p>
+                      <Link 
+                        href="/model-access"
+                        className="inline-flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
+                      >
+                        <span>📖</span>
+                        <span>Learn About Model Access</span>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          )}
         </div>
 
         {/* Model Training Modal */}

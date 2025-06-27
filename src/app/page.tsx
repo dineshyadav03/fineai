@@ -137,33 +137,72 @@ export default function LandingPage() {
             }}
           />
         ))}
+
+        {/* Interactive Mouse Follower */}
+        <motion.div
+          className="absolute w-80 h-80 rounded-full pointer-events-none"
+          style={{
+            background: 'radial-gradient(circle, rgba(255,107,0,0.15) 0%, transparent 70%)',
+            left: mousePosition.x - 160,
+            top: mousePosition.y - 160,
+          }}
+          animate={{
+            scale: [1, 1.1, 1],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+
+        {/* Geometric Shapes */}
+        <motion.div
+          className="absolute top-20 left-20 w-6 h-6 border-2 border-accent-400/40"
+          animate={{
+            rotate: [0, 180, 360],
+            scale: [1, 1.2, 1],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+
+        <motion.div
+          className="absolute bottom-32 right-20 w-8 h-8 bg-accent-400/30 rounded-full"
+          animate={{
+            y: [0, -30, 0],
+            opacity: [0.3, 0.8, 0.3],
+          }}
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1
+          }}
+        />
+
+        <motion.div
+          className="absolute top-1/3 right-32 w-4 h-12 bg-gradient-to-b from-accent-400/40 to-transparent"
+          animate={{
+            scaleY: [1, 1.5, 1],
+            opacity: [0.4, 0.8, 0.4],
+          }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 2
+          }}
+        />
       </div>
 
-      {/* Navigation */}
-      <nav className="relative z-50 flex items-center justify-between p-6">
-        <div className="flex items-center space-x-8">
-          <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
-            <div className="w-4 h-4 bg-white rounded-full" />
-          </div>
-          
-          <div className="hidden md:flex items-center space-x-8 text-white/80">
-            <Link href="/features" className="hover:text-white transition-colors">Features</Link>
-            <Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link>
-            <Link href="/learn-more" className="hover:text-white transition-colors">Resources</Link>
-            <Link href="/dashboard" className="hover:text-white transition-colors">Dashboard</Link>
-          </div>
-        </div>
-        
-        <button
-          onClick={handleGetStarted}
-          className="px-6 py-2 bg-white text-gray-900 rounded-full font-medium hover:bg-gray-100 transition-colors"
-        >
-          Try Today
-        </button>
-      </nav>
+
 
       {/* Main Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 text-center">
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 text-center pt-32">
         
         {/* Main Headline */}
         <motion.div
@@ -172,9 +211,24 @@ export default function LandingPage() {
           transition={{ duration: 1, delay: 0.5 }}
           className="mb-8"
         >
-                     <h1 className="text-6xl md:text-8xl lg:text-9xl font-light text-white leading-tight tracking-tight">
-             Craft intelligence
-           </h1>
+          <motion.h1 
+            className="text-6xl md:text-8xl lg:text-9xl font-light text-white leading-tight tracking-tight"
+          >
+            <motion.span
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.8 }}
+            >
+              Craft{" "}
+            </motion.span>
+            <motion.span
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 1.2 }}
+            >
+              intelligence
+            </motion.span>
+          </motion.h1>
         </motion.div>
 
         {/* Subtitle */}
@@ -193,20 +247,47 @@ export default function LandingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 1.1 }}
         >
-          <button
+          <motion.button
             onClick={handleGetStarted}
-            className="group inline-flex items-center px-8 py-4 bg-white text-gray-900 rounded-full font-medium hover:bg-gray-100 transition-all duration-300"
+            className="group relative inline-flex items-center px-8 py-4 bg-white text-gray-900 rounded-full font-medium overflow-hidden"
+            whileHover={{ 
+              scale: 1.05,
+              boxShadow: "0 20px 40px rgba(255,255,255,0.2)"
+            }}
+            whileTap={{ scale: 0.95 }}
+            animate={{
+              y: [0, -2, 0],
+            }}
+            transition={{
+              y: {
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }
+            }}
           >
-            Join the platform
-            <svg 
-              className="ml-2 w-4 h-4 transform group-hover:translate-x-1 transition-transform" 
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-accent-400/20 to-accent-600/20"
+              initial={{ x: "-100%" }}
+              whileHover={{ x: "100%" }}
+              transition={{ duration: 0.6 }}
+            />
+            <span className="relative z-10">Join the platform</span>
+            <motion.svg 
+              className="ml-2 w-4 h-4 relative z-10" 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24"
+              animate={{ x: [0, 3, 0] }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </button>
+            </motion.svg>
+          </motion.button>
         </motion.div>
 
                  {/* Bottom text */}

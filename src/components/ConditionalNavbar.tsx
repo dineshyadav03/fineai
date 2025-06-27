@@ -6,10 +6,6 @@ import Navbar from './Navbar';
 export default function ConditionalNavbar() {
   const pathname = usePathname();
   
-  // Don't show navbar on home page (landing page has its own navigation)
-  if (pathname === '/') {
-    return null;
-  }
-  
+  // Show navbar on ALL pages including landing page for consistency
   return <Navbar />;
 } 

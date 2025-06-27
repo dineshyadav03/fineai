@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { motion, AnimatePresence } from 'framer-motion';
 import { cohereService } from '@/services/cohere';
 import { Dataset } from '@/types/cohere';
 import toast from 'react-hot-toast';
@@ -88,8 +89,6 @@ export default function FileUpload({ onSuccess }: FileUploadProps) {
       // Use real Cohere API for production fine-tuning
       const response = await cohereService.createDataset(datasetName, file);
       
-
-      
       if (response.error) {
         throw new Error(response.error.message);
       }
@@ -123,14 +122,20 @@ export default function FileUpload({ onSuccess }: FileUploadProps) {
     <div className="w-full max-w-2xl mx-auto">
       <div
         {...getRootProps()}
-        className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${isDragActive 
+        className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] ${isDragActive 
             ? 'border-orange-500 bg-orange-500/20' 
             : 'border-white/20 hover:border-orange-500'
           }`}
       >
         <input {...getInputProps()} />
         {file ? (
-          <div className="space-y-4">
+          <motion.div 
+            key="file-selected"
+            className="space-y-4"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.2 }}
+          >
             <div className="flex items-center justify-between p-3 bg-white/10 border border-white/20 rounded-md">
               <div>
                 <p className="text-white font-medium">{file.name}</p>
@@ -143,7 +148,7 @@ export default function FileUpload({ onSuccess }: FileUploadProps) {
                   e.stopPropagation();
                   handleRemoveFile();
                 }}
-                className="text-red-400 hover:text-red-300"
+                className="text-red-400 hover:text-red-300 transition-colors"
               >
                 ✕
               </button>
@@ -158,9 +163,15 @@ export default function FileUpload({ onSuccess }: FileUploadProps) {
             >
               {uploading ? 'Uploading...' : 'Upload Dataset'}
             </button>
-          </div>
+          </motion.div>
         ) : (
-          <div className="space-y-2">
+          <motion.div 
+            key="no-file"
+            className="space-y-2"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
+          >
             <div className="text-orange-400 mb-4">
               <svg className="mx-auto h-12 w-12" stroke="currentColor" fill="none" viewBox="0 0 48 48">
                 <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -174,20 +185,30 @@ export default function FileUpload({ onSuccess }: FileUploadProps) {
             <p className="text-sm text-gray-300 font-light">
               Supported formats: CSV, JSON, JSONL (max 10MB)
             </p>
-          </div>
+          </motion.div>
         )}
       </div>
 
       {error && (
-        <div className="mt-4 p-4 bg-red-500/20 border border-red-500/30 rounded-md">
+        <motion.div 
+          className="mt-4 p-4 bg-red-500/20 border border-red-500/30 rounded-md"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
           <p className="text-red-200">{error}</p>
-        </div>
+        </motion.div>
       )}
 
       {success && (
-        <div className="mt-4 p-4 bg-green-500/20 border border-green-500/30 rounded-md">
+        <motion.div 
+          className="mt-4 p-4 bg-green-500/20 border border-green-500/30 rounded-md"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
           <p className="text-green-200">{success}</p>
-        </div>
+        </motion.div>
       )}
 
       <div className="mt-4 text-sm text-gray-300 font-light">
@@ -197,7 +218,6 @@ export default function FileUpload({ onSuccess }: FileUploadProps) {
           <li><strong className="text-white">CSV (Classification):</strong> Columns: 'text' and 'label'</li>
           <li><strong className="text-white">Legacy format (prompt/completion):</strong> Will be auto-converted to chat format</li>
         </ul>
-
       </div>
     </div>
   );
